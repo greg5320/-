@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ map.title }}</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>{{ map.title }}</h1>
+    <p>{{ map.description }}</p>
+    <img src="{{ map.image_url }}" alt="{{ map.title }}">
+    <p>
+        <a href="{% url 'maps' %}">Назад к списку карт</a>
+    </p>
+</body>
+</html>

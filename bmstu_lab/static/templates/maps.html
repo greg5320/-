@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Maps</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>Список карт</h1>
+    <a href="{% url 'view_cart' %}" class="cart-link">Перейти в корзину</a>
+    <div class="map-container">
+        {% for map in maps %}
+            <div class="map-item">
+                <a href="{% url 'map_detail' map.id %}">
+                    <img src="{{ map.image_url }}" alt="{{ map.title }}">
+                    <p>{{ map.title }}</p>
+                </a>
+                <form action="{% url 'add_to_cart' map.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Добавить в корзину</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

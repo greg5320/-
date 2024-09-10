@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Корзина</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>Корзина</h1>
+    <div class="map-container">
+        {% for map in cart_maps %}
+            <div class="map-item">
+                <img src="{{ map.image_url }}" alt="{{ map.title }}">
+                <p>{{ map.title }}</p>
+            </div>
+        {% empty %}
+            <p>Ваша корзина пуста.</p>
+        {% endfor %}
+    </div>
+    <a href="{% url 'maps' %}">Назад к картам</a>
+</body>
+</html>

@@ -1,3 +1,30 @@
-.order-text {
-  font-size: 20px;
+body{
+    background-color: black;
+    color: white;
+}
+
+.map-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.map-item {
+    width: 200px;
+    margin: 10px;
+    text-align: center;
+}
+
+.map-item img {
+    width: 100%;
+    height: auto;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+    color: white;
+    text-decoration: underline;
 }
