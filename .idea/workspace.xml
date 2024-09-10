@@ -6,8 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="a9cc7ce2-fae0-4ab9-9230-64fdde309c32" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bmstu_lab/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bmstu_lab/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/static/css/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/cart.html" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/static/templates/cart.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/map_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/static/templates/map_detail.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/maps.html" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/static/templates/maps.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bmstu_lab/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bmstu_lab/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
@@ -105,7 +107,7 @@
       <option name="presentableId" value="Default" />
       <updated>1725698380588</updated>
       <workItem from="1725698389476" duration="2266000" />
-      <workItem from="1725700669618" duration="20738000" />
+      <workItem from="1725700669618" duration="27381000" />
     </task>
     <servers />
   </component>

@@ -1,6 +1,8 @@
-body{
+
+body {
     background-color: black;
     color: white;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 .map-container {
@@ -19,12 +21,152 @@ body{
     height: auto;
 }
 
-a {
+.map-detail-container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+}
+
+.main-title {
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-align: left;
     color: white;
+}
+
+.map-content {
+    display: flex;
+    gap: 20px;
+}
+
+.map-card {
+    background-color: #333;
+    border: 2px solid #111;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 400px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.map-title {
+    background-color: #0044cc;
+    color: white;
+    padding: 10px;
+    font-size: 1.5em;
+    margin: 0;
+}
+
+.map-card-image {
+    width: 100%;
+    height: auto;
+}
+
+.general-info {
+    background-color: #0044cc;
+    padding: 10px 0;
+    border-top: 2px solid #0044cc;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 20px;
+    background-color: #444;
+    border-bottom: 1px solid #555;
+}
+
+.info-label {
+    color: #888;
+    font-weight: bold;
+}
+
+.info-value {
+    color: white;
+}
+
+.map-description {
+    flex: 1;
+    background-color: #222;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.map-description p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.contents {
+    background-color: #333;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #444;
+}
+
+.contents h4 {
+    margin: 0;
+    font-weight: bold;
+}
+
+.contents ol {
+    padding-left: 20px;
+}
+
+.toggle {
+    color: #1e90ff;
+    cursor: pointer;
+}
+
+.back-button {
+    display: inline-block;
+    padding: 10px 15px;
+    margin-top: 20px;
+    background-color: #0044cc;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.back-button:hover {
+    background-color: #0055ee;
+}
+
+button {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+
+.cart-icon-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.cart-link {
+    position: relative;
     text-decoration: none;
 }
 
-a:hover {
-    color: white;
-    text-decoration: underline;
+.cart-icon {
+    width: 55px;
+    height: 55px;
 }
+
+.cart-count {
+    position: absolute;
+    top: -40px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 8px;
+    font-size: 14px;
+    font-weight: bold;
+}
+

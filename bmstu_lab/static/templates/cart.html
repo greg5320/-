@@ -9,15 +9,17 @@
 <body>
     <h1>Корзина</h1>
     <div class="map-container">
-        {% for map in cart_maps %}
-            <div class="map-item">
+    {% for map in cart_maps %}
+        <div class="map-item">
+            <a href="{% url 'map_detail' map.id %}?from=cart">
                 <img src="{{ map.image_url }}" alt="{{ map.title }}">
-                <p>{{ map.title }}</p>
-            </div>
-        {% empty %}
-            <p>Ваша корзина пуста.</p>
-        {% endfor %}
-    </div>
-    <a href="{% url 'maps' %}">Назад к картам</a>
+            </a>
+            <p>{{ map.title }}</p>
+        </div>
+    {% empty %}
+        <p>Ваша корзина пуста.</p>
+    {% endfor %}
+</div>
+<a href="{% url 'maps' %}">Назад к картам</a>
 </body>
 </html>

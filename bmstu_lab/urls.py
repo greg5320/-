@@ -24,3 +24,4 @@ urlpatterns = [
     path('add_to_cart/<int:map_id>/', views.add_to_cart, name='add_to_cart'),
     path('cart/', views.view_cart, name='view_cart'),
 ]
+
