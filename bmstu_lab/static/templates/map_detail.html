@@ -7,6 +7,10 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 </head>
 <body>
+    <div class="header-back-button">
+        <a href="{% url 'maps' %}">Домой</a>
+        <p class="header"></p>
+    </div>
     <div class="map-detail-container">
         <h1 class="main-title">{{ map.title }}</h1>
         <div class="map-content">
@@ -14,30 +18,23 @@
                 <h2 class="map-title">{{ map.title }}</h2>
                 <img src="{{ map.image_url }}" alt="{{ map.title }}" class="map-card-image">
                 <div class="general-info">
-                    <h3>General Information</h3>
+                    <h3>Общая информация</h3>
                     <div class="info-row">
-                        <span class="info-label">Players</span>
+                        <span class="info-label">Количество игроков</span>
                         <span class="info-value">{{map.players}}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Tileset</span>
+                        <span class="info-label">Местность</span>
                         <span class="info-value">{{ map.tileset}}</span>
                     </div>
                 </div>
             </div>
             <div class="map-description">
                 <p>{{ map.description}}</p>
-                <h2>Overview</h2>
+                <h2>Обзор</h2>
                 <p>{{ map.overview }}</p>
             </div>
         </div>
-        <p>
-            {% if request.GET.from == 'cart' %}
-                <a href="{% url 'view_cart' %}" class="back-button">Назад в корзину</a>
-            {% else %}
-                <a href="{% url 'maps' %}" class="back-button">Назад к списку карт</a>
-            {% endif %}
-        </p>
     </div>
 </body>
 </html>

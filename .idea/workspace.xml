@@ -5,11 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a9cc7ce2-fae0-4ab9-9230-64fdde309c32" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/bmstu_lab.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/bmstu_lab.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bmstu_lab/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/static/css/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/base.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/cart.html" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/static/templates/cart.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/index.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/map_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/static/templates/map_detail.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/maps.html" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/static/templates/maps.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/order.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/orders.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bmstu_lab/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bmstu_lab/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
@@ -48,13 +53,14 @@
     "Django Server.bmstu_lab.executor": "Run",
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "django.template.preview.state": "SHOW_EDITOR",
     "git-widget-placeholder": "lab1",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.intellij.python.django.customization.DjangoModulesConfigurable",
+    "settings.editor.selected.configurable": "org.intellij.sdk.settings.AppSettingsConfigurable",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -107,7 +113,9 @@
       <option name="presentableId" value="Default" />
       <updated>1725698380588</updated>
       <workItem from="1725698389476" duration="2266000" />
-      <workItem from="1725700669618" duration="27381000" />
+      <workItem from="1725700669618" duration="51223000" />
+      <workItem from="1726163670245" duration="1588000" />
+      <workItem from="1726568531442" duration="6407000" />
     </task>
     <servers />
   </component>

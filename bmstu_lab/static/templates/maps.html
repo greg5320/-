@@ -7,6 +7,10 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 </head>
 <body>
+    <div class="header-back-button">
+        <a href="{% url 'maps' %}">Домой</a>
+        <p class="header"></p>
+    </div>
     <h1>Список карт</h1>
     <div class="cart-icon-container">
         <a href="{% url 'view_cart' %}" class="cart-link">
@@ -14,22 +18,18 @@
             <span class="cart-count">2</span>
         </a>
     </div>
-    <form method="get" action="{% url 'maps' %}">
-        <input type="text" name="q" placeholder="Поиск по названию" value="{{ request.GET.q }}">
+    <form method="get" action="{% url 'maps' %}" class="find-button">
+        <input type="text" name="map" placeholder="Поиск по названию" value="{{ request.GET.q }}">
         <button type="submit">Поиск</button>
     </form>
 
     <div class="map-container">
         {% for map in maps %}
             <div class="map-item">
-                <a href="{% url 'map_detail' map.id %}?from=maps">
+                <a href="{% url 'map_detail' map.id %}">
                     <img src="{{ map.image_url }}" alt="{{ map.title }}">
                     <p>{{ map.title }}</p>
                 </a>
-                <form action="{% url 'add_to_cart' map.id %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" disabled>Добавить в корзину</button>
-                </form>
             </div>
         {% empty %}
             <p>Нет карт, соответствующих вашему запросу.</p>

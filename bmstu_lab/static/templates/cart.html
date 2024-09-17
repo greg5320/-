@@ -7,19 +7,39 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <h1>Корзина</h1>
-    <div class="map-container">
-    {% for map in cart_maps %}
-        <div class="map-item">
-            <a href="{% url 'map_detail' map.id %}?from=cart">
-                <img src="{{ map.image_url }}" alt="{{ map.title }}">
-            </a>
-            <p>{{ map.title }}</p>
-        </div>
-    {% empty %}
-        <p>Ваша корзина пуста.</p>
-    {% endfor %}
-</div>
-<a href="{% url 'maps' %}">Назад к картам</a>
+    <div class="header-back-button">
+        <a href="{% url 'maps' %}">Домой</a>
+        <p class="header"></p>
+    </div>
+    
+    <div>
+        <h2>Турниры</h2>
+        <form method="get" action="#">
+            <label for="tournament-select">Выберите турнир для участия:</label>
+            <select name="tournament" id="tournament-select">
+                {% for tournament in tournaments %}
+                    <option value="{{ tournament.id }}">{{ tournament.name }}</option>
+                {% empty %}
+                    <option disabled>Нет доступных турниров</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Участвовать</button>
+        </form>
+    </div>
+
+    <div class="cart-container">
+        {% for map in cart_maps %}
+            <div class="map-item">
+                <div class="map-number">{{ forloop.counter }}</div> 
+                <a href="{% url 'map_detail' map.id %}">
+                    <img src="{{ map.image_url }}" alt="{{ map.title }}">
+                </a>
+                <p>{{ map.title }}</p>
+            </div>
+        {% empty %}
+            <p>Ваша корзина пуста.</p>
+        {% endfor %}
+    </div>
+
 </body>
 </html>
