@@ -5,18 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a9cc7ce2-fae0-4ab9-9230-64fdde309c32" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/bmstu_lab.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/bmstu_lab.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/static/css/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/base.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/cart.html" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/static/templates/cart.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/map_detail.html" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/static/templates/map_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/maps.html" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/static/templates/maps.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/order.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bmstu_lab/static/templates/orders.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/bmstu_lab/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bmstu_lab/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -115,7 +105,7 @@
       <workItem from="1725698389476" duration="2266000" />
       <workItem from="1725700669618" duration="51223000" />
       <workItem from="1726163670245" duration="1588000" />
-      <workItem from="1726568531442" duration="6407000" />
+      <workItem from="1726568531442" duration="7674000" />
     </task>
     <servers />
   </component>
