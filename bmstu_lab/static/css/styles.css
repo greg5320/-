@@ -27,9 +27,16 @@ body {
     text-align: center;
 }
 
+.map-list-item {
+    position: relative;
+    list-style: none;
+    margin-bottom: 15px;
+
+}
+
 .map-number {
     position: absolute;
-    top: 40%;
+    top: 50%;
     left: -35px;
     transform: translateY(-50%);
     font-size: 1.5em;
@@ -41,6 +48,15 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.map-item img {
+    width: 150px;
+    height: auto;
+}
+
+.map-item p {
+    margin-top: 5px;
 }
 
 .find-button{

@@ -13,9 +13,9 @@
     </div>
     <h1>Список карт</h1>
     <div class="cart-icon-container">
-        <a href="{% url 'view_cart' %}" class="cart-link">
+        <a href="{% url 'view_cart' cart_id=1 %}" class="cart-link">
             <img src="http://127.0.0.1:9000/mybucket/cart.png" alt="Корзина" class="cart-icon">
-            <span class="cart-count">2</span>
+            <span class="cart-count">{{ cart_count }}</span>
         </a>
     </div>
     <form method="get" action="{% url 'maps' %}" class="find-button">
