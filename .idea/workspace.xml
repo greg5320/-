@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a9cc7ce2-fae0-4ab9-9230-64fdde309c32" name="Changes" comment="" />
+    <list default="true" id="a9cc7ce2-fae0-4ab9-9230-64fdde309c32" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bmstu_lab/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/bmstu_lab/urls.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -40,13 +43,13 @@
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "django.template.preview.state": "SHOW_EDITOR",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "SSR",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "org.intellij.sdk.settings.AppSettingsConfigurable",
+    "settings.editor.selected.configurable": "preferences.keymap",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -101,7 +104,8 @@
       <workItem from="1725698389476" duration="2266000" />
       <workItem from="1725700669618" duration="51223000" />
       <workItem from="1726163670245" duration="1588000" />
-      <workItem from="1726568531442" duration="8473000" />
+      <workItem from="1726568531442" duration="9918000" />
+      <workItem from="1726817321949" duration="392000" />
     </task>
     <servers />
   </component>
