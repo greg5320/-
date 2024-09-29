@@ -2,50 +2,48 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Maps</title>
+    <title>Карты</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <div class="header-back-button">
-        <a href="{% url 'maps' %}">Домой</a>
-        <p class="header"></p>
-    </div>
-    <h1>Список карт</h1>
-    <div class="cart-icon-container">
-    {% if cart_count > 0 %}
-        <a href="{% url 'cart' cart_id=cart_id %}" class="cart-link">
-            <img src="http://127.0.0.1:9000/mybucket/cart.png" alt="Корзина" class="cart-icon">
-            <span class="cart-count">{{ cart_count }}</span>
+<div class="header-back-button">
+    <a href="{% url 'maps' %}">Домой</a>
+    <p class="header"></p>
+</div>
+<h1>Список карт</h1>
+<div class="map_pool-icon-container">
+    {% if map_pool_count > 0 %}
+        <a href="{% url 'map_pool' map_pool_id=map_pool_id %}" class="map_pool-link">
+            <img src="http://127.0.0.1:9000/mybucket/cart.png" alt="Корзина" class="map_pool-icon">
+            <span class="map_pool-count">{{ map_pool_count }}</span>
         </a>
     {% else %}
-        <span class="cart-link disabled">
-            <img src="http://127.0.0.1:9000/mybucket/cart.png" alt="Корзина" class="cart-icon">
-            <span class="cart-count">{{ cart_count }}</span>
-        </span>
+        <span class="map_pool-link disabled">
+<img src="http://127.0.0.1:9000/mybucket/cart.png" alt="Корзина" class="map_pool-icon">
+<span class="map_pool-count">{{ map_pool_count }}</span>
+</span>
     {% endif %}
 </div>
-
-    <form method="get" action="{% url 'maps' %}" class="find-button">
-        <input type="text" name="map" placeholder="Поиск по названию" value="{{ request.GET.q }}">
-        <button type="submit">Поиск</button>
-    </form>
-
-    <div class="map-container">
-        {% for map in maps %}
-            <div class="map-item">
-                <a href="{% url 'map_detail' map.id %}">
-                    <img src="{{ map.image_url }}" alt="{{ map.title }}">
-                    <p>{{ map.title }}</p>
-                </a>
-            <form method="post" action="{% url 'add_to_cart' map.id %}">
-            {% csrf_token %}
-                <button type="submit">Добавить в корзину</button>
+<form method="get" action="{% url 'maps' %}" class="find-button">
+    <input type="text" name="map" placeholder="Поиск по названию" value="{{ request.GET.q }}">
+    <button type="submit">Поиск</button>
+</form>
+<div class="map-container">
+    {% for map in maps %}
+        <div class="map-item">
+            <a href="{% url 'map_detail' map.id %}">
+                <img src="{{ map.image_url }}" alt="{{ map.title }}">
+                <p>{{ map.title }}</p>
+            </a>
+            <form method="post" action="{% url 'add_to_map_pool' map.id %}">
+                {% csrf_token %}
+                <button type="submit">Добавить в пул карт</button>
             </form>
-            </div>
+        </div>
         {% empty %}
-            <p>Нет карт, соответствующих вашему запросу.</p>
-        {% endfor %}
-    </div>
+        <p>Нет карт, соответствующих вашему запросу.</p>
+    {% endfor %}
+</div>
 </body>
 </html>

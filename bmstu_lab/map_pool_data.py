@@ -1,5 +1,5 @@
 
-cart_maps = {'id': 1,
+map_pool = {'id': 1,
               'maps': [
                 {
                     'id': 1,

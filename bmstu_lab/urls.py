@@ -5,9 +5,9 @@ from bmstu_lab import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.get_maps, name='maps'),
-    path('map/<int:map_id>/add/', views.add_to_cart, name='add_to_cart'),
-    path('cart/<int:cart_id>/', views.view_cart, name='cart'),
+    path('map/<int:map_id>/add/', views.add_to_map_pool, name='add_to_map_pool'),
+    path('map_pool/<int:map_pool_id>/', views.view_map_pool, name='map_pool'),
     path('map/<int:id>/', views.get_map_detail, name='map_detail'),
-    path('cart/<int:cart_id>/delete/', views.delete_cart, name='delete_cart'),
+    path('map_pool/<int:map_pool_id>/delete/', views.delete_map_pool, name='delete_map_pool'),
 ]
 

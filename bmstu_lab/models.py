@@ -13,7 +13,7 @@ class Map(models.Model):
     def __str__(self):
         return self.title
 
-class Cart(models.Model):
+class MapPool(models.Model):
     STATUS_CHOICES = [
         ('draft', 'Черновик'),
         ('deleted', 'Удалён'),
@@ -25,22 +25,22 @@ class Cart(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     submit_date = models.DateTimeField(null=True, blank=True)
     complete_date = models.DateTimeField(null=True, blank=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='carts')
-    moderator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='moderated_carts')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='map_pools')
+    moderator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='moderated_map_pools')
 
     def __str__(self):
-        return f"Cart {self.id} - {self.status}"
+        return f"MapPool {self.id} - {self.status}"
 
-class MapCart(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+class MapMapPool(models.Model):
+    map_pool = models.ForeignKey(MapPool, on_delete=models.CASCADE)
     map = models.ForeignKey(Map, on_delete=models.CASCADE)
     #quantity = models.PositiveIntegerField(default=1)
     position = models.PositiveIntegerField()
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['cart', 'map'], name='unique_cart_map')
+            models.UniqueConstraint(fields=['map_pool', 'map'], name='unique_map_pool_map')
         ]
 
     def __str__(self):
-        return f"Map {self.map.title} in Cart {self.cart.id} (Position: {self.position})"
+        return f"Map {self.map.title} in MapPool {self.map_pool.id} (Position: {self.position})"
