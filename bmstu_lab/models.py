@@ -34,7 +34,7 @@ class Cart(models.Model):
 class MapCart(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     map = models.ForeignKey(Map, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
+    #quantity = models.PositiveIntegerField(default=1)
     position = models.PositiveIntegerField()
 
     class Meta:

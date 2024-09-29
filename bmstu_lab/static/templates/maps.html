@@ -13,11 +13,19 @@
     </div>
     <h1>Список карт</h1>
     <div class="cart-icon-container">
-        <a href="{% url 'view_cart' cart_id=1 %}" class="cart-link">
+    {% if cart_count > 0 %}
+        <a href="{% url 'cart' cart_id=cart_id %}" class="cart-link">
             <img src="http://127.0.0.1:9000/mybucket/cart.png" alt="Корзина" class="cart-icon">
             <span class="cart-count">{{ cart_count }}</span>
         </a>
-    </div>
+    {% else %}
+        <span class="cart-link disabled">
+            <img src="http://127.0.0.1:9000/mybucket/cart.png" alt="Корзина" class="cart-icon">
+            <span class="cart-count">{{ cart_count }}</span>
+        </span>
+    {% endif %}
+</div>
+
     <form method="get" action="{% url 'maps' %}" class="find-button">
         <input type="text" name="map" placeholder="Поиск по названию" value="{{ request.GET.q }}">
         <button type="submit">Поиск</button>
@@ -30,6 +38,10 @@
                     <img src="{{ map.image_url }}" alt="{{ map.title }}">
                     <p>{{ map.title }}</p>
                 </a>
+            <form method="post" action="{% url 'add_to_cart' map.id %}">
+            {% csrf_token %}
+                <button type="submit">Добавить в корзину</button>
+            </form>
             </div>
         {% empty %}
             <p>Нет карт, соответствующих вашему запросу.</p>
