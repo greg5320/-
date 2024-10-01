@@ -4,10 +4,18 @@ from .models import MapPool, MapMapPool, Map
 from django.db import connection
 def get_maps(request):
     map_pool, created = MapPool.objects.get_or_create(user=request.user, status='draft')
-    maps = Map.objects.all()
+    query = request.GET.get('map', '')
+    if query:
+        maps = Map.objects.filter(title__icontains=query)
+    else:
+        maps = Map.objects.all()
     map_pool_count = MapMapPool.objects.filter(map_pool=map_pool).count()
-
-    return render(request, 'maps.html', {'maps': maps, 'map_pool_count': map_pool_count, 'map_pool_id': map_pool.id})
+    return render(request, 'maps.html', {
+        'maps': maps,
+        'map_pool_count': map_pool_count,
+        'map_pool_id': map_pool.id,
+        'query': query
+    })
 
 def add_to_map_pool(request, map_id):
     map_obj = get_object_or_404(Map, id=map_id, status='active')

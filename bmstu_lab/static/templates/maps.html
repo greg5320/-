@@ -26,7 +26,7 @@
     {% endif %}
 </div>
 <form method="get" action="{% url 'maps' %}" class="find-button">
-    <input type="text" name="map" placeholder="Поиск по названию" value="{{ request.GET.q }}">
+    <input type="text" name="map" placeholder="Поиск по названию" value="{{ query }}">
     <button type="submit">Поиск</button>
 </form>
 <div class="map-container">
