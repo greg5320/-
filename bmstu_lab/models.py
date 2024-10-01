@@ -22,6 +22,7 @@ class MapPool(models.Model):
         ('rejected', 'Отклонён'),
     ]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    player_login = models.CharField(max_length=150, blank=True, null=True)
     creation_date = models.DateTimeField(auto_now_add=True)
     submit_date = models.DateTimeField(null=True, blank=True)
     complete_date = models.DateTimeField(null=True, blank=True)

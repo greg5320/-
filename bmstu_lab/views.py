@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect
 from .models import MapPool, MapMapPool, Map
 from django.db import connection
 def get_maps(request):
-    map_pool, created = MapPool.objects.get_or_create(user=request.user, status='draft')
+    map_pool, created = MapPool.objects.get_or_create(user=request.user, status='draft',defaults={'player_login': 'greg'})
     query = request.GET.get('map', '')
     if query:
         maps = Map.objects.filter(title__icontains=query)

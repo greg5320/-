@@ -12,16 +12,11 @@
     <p class="header"></p>
 </div>
 <div>
-    <h2>Турниры</h2>
-    <form method="get" action="#">
-        <label for="tournament-select">Выберите турнир для участия:</label>
-        <select name="tournament" id="tournament-select">
-            <option value="tournament1">Турнир 1</option>
-            <option value="tournament2">Турнир 2</option>
-            <option value="tournament3">Турнир 3</option>
-            <option value="tournament4">Турнир 4</option>
-        </select>
-    </form>
+        <h3>Игрок: {{ map_pool.user.username }}</h3>
+    </div>
+<div>
+    <h2>Список карт на турнир StarCraft II World Championship Series</h2>
+    
 </div>
 <form method="post" action="{% url 'delete_map_pool' map_pool.id %}">
     {% csrf_token %}

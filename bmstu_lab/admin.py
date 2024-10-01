@@ -7,8 +7,8 @@ class MapAdmin(admin.ModelAdmin):
     search_fields = ('title',)
 
 @admin.register(MapPool)
-class CartAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'status', 'creation_date')
+class MapPoolAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user','player_login', 'status', 'creation_date')
     list_filter = ('status',)
 
 @admin.register(MapMapPool)
