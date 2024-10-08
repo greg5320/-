@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.conf import settings
 
 class Map(models.Model):
     title = models.CharField(max_length=255)
@@ -26,16 +27,15 @@ class MapPool(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     submit_date = models.DateTimeField(null=True, blank=True)
     complete_date = models.DateTimeField(null=True, blank=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='map_pools')
-    moderator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='moderated_map_pools')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='map_pools')
+    moderator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='moderated_map_pools')
 
     def __str__(self):
         return f"MapPool {self.id} - {self.status}"
 
 class MapMapPool(models.Model):
-    map_pool = models.ForeignKey(MapPool, on_delete=models.CASCADE)
+    map_pool = models.ForeignKey(MapPool, related_name='mapmappool', on_delete=models.CASCADE)
     map = models.ForeignKey(Map, on_delete=models.CASCADE)
-    #quantity = models.PositiveIntegerField(default=1)
     position = models.PositiveIntegerField()
 
     class Meta:
@@ -45,3 +45,24 @@ class MapMapPool(models.Model):
 
     def __str__(self):
         return f"Map {self.map.title} in MapPool {self.map_pool.id} (Position: {self.position})"
+
+class AuthUser(AbstractUser):
+    groups = models.ManyToManyField(
+        Group,
+        related_name="custom_user_set",
+        blank=True,
+        help_text="The groups this user belongs to.",
+        verbose_name="groups",
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name="custom_user_permissions_set",
+        blank=True,
+        help_text="Specific permissions for this user.",
+        verbose_name="user permissions",
+    )
+    is_moderator = models.BooleanField(default=False, verbose_name='Is Moderator')
+    is_creator = models.BooleanField(default=False, verbose_name='Is Creator')
+
+    def __str__(self):
+        return self.username

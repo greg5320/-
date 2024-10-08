@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-!073em24n!@!1fg0xxtfkngomoen7ofs(o!38b8fts^-81gp8&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '1.0.0.127.in-addr.arpa']
 
 
 # Application definition
@@ -38,7 +38,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bmstu_lab',
+    'django_filters',
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
+MINIO_STORAGE_ENDPOINT = 'localhost:9000'
+MINIO_STORAGE_ACCESS_KEY = 'minio'
+MINIO_STORAGE_SECRET_KEY = 'minio124'
+MINIO_STORAGE_BUCKET_NAME = 'mybucket'
+MINIO_STORAGE_USE_HTTPS = False
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -75,7 +84,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bmstu_lab.wsgi.application'
 
-
+AUTH_USER_MODEL = 'bmstu_lab.AuthUser'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -89,7 +98,11 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
