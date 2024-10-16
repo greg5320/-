@@ -84,7 +84,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bmstu_lab.wsgi.application'
 
-AUTH_USER_MODEL = 'bmstu_lab.AuthUser'
+
+CREATOR_USERNAME = 'exampleuser'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Map, MapPool, MapMapPool, AuthUser
+from .models import Map, MapPool, MapMapPool
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.contrib.auth.models import User
@@ -16,84 +16,45 @@ class MapSerializer(serializers.ModelSerializer):
         model = Map
         fields = '__all__'
 
-class MapPoolDetailSerializer(serializers.ModelSerializer):
-    maps = serializers.SerializerMethodField()
-
-    class Meta:
-        model = MapPool
-        fields = '__all__'
-
-    def get_maps(self, obj):
-        map_map_pools = obj.mapmappool.select_related('map').all()
-        return [{'map': MapSerializer(map_map_pool.map).data, 'position': map_map_pool.position} for map_map_pool in map_map_pools]
-
-
-class MapPoolSerializer(serializers.ModelSerializer):
-    status = serializers.ChoiceField(choices=MapPool.STATUS_CHOICES)
-    player_login = serializers.CharField(max_length=150, required=False, allow_blank=True)
-    creation_date = serializers.DateTimeField(read_only=True)
-    submit_date = serializers.DateTimeField(read_only=True)
-    complete_date = serializers.DateTimeField(read_only=True)
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
-    moderator = serializers.PrimaryKeyRelatedField(queryset=AuthUser.objects.all(), required=False)
-    delivery_date = serializers.DateField(required=False)
-
-    class Meta:
-        model = MapPool
-        fields = '__all__'
-
 class MapMapPoolSerializer(serializers.ModelSerializer):
-    map_pool = serializers.PrimaryKeyRelatedField(queryset=MapPool.objects.all())
-    map = serializers.PrimaryKeyRelatedField(queryset=Map.objects.all())
+
+    map = MapSerializer()
     position = serializers.IntegerField(min_value=1)
 
     class Meta:
         model = MapMapPool
-        fields = '__all__'
+        fields = ['map', 'position']
 
-class UserSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(max_length=150)
-    email = serializers.EmailField()
+class MapPoolSerializer(serializers.ModelSerializer):
+    user_login = serializers.CharField(source='user.username', read_only=True)
+    moderator_login = serializers.CharField(source='moderator.username', read_only=True, allow_null=True)
+    maps = MapMapPoolSerializer(source='mapmappool', many=True, read_only=True)
+    class Meta:
+        model = MapPool
+        fields = ['id', 'status', 'player_login', 'creation_date', 'submit_date', 'complete_date', 'user_login', 'moderator_login','maps']
+        read_only_fields = ['user_login','moderator_login', 'creation_date', 'submit_date', 'complete_date']
+
+class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    is_staff = serializers.BooleanField(default=False)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['username', 'password', 'email', 'first_name', 'last_name', 'is_staff']
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
-
-
-class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=150)
-    password = serializers.CharField(write_only=True)
-
-class MapUploadSerializer(serializers.Serializer):
-    image = serializers.ImageField()
-
-
-class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'password')
-
-    def create(self, validated_data):
-        user = User(**validated_data)
+        user = User(
+            username=validated_data['username'],
+            email=validated_data.get('email'),
+            first_name=validated_data.get('first_name', ''),
+            last_name=validated_data.get('last_name', ''),
+            is_staff=validated_data.get('is_staff', False),
+        )
         user.set_password(validated_data['password'])
         user.save()
         return user
 
-class AuthUserSerializer(serializers.ModelSerializer):
+class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AuthUser
-        fields = ['username', 'password', 'is_moderator', 'is_creator']
-
-    def create(self, validated_data):
-        user = AuthUser(**validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'is_staff']

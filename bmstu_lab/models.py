@@ -46,23 +46,3 @@ class MapMapPool(models.Model):
     def __str__(self):
         return f"Map {self.map.title} in MapPool {self.map_pool.id} (Position: {self.position})"
 
-class AuthUser(AbstractUser):
-    groups = models.ManyToManyField(
-        Group,
-        related_name="custom_user_set",
-        blank=True,
-        help_text="The groups this user belongs to.",
-        verbose_name="groups",
-    )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        related_name="custom_user_permissions_set",
-        blank=True,
-        help_text="Specific permissions for this user.",
-        verbose_name="user permissions",
-    )
-    is_moderator = models.BooleanField(default=False, verbose_name='Is Moderator')
-    is_creator = models.BooleanField(default=False, verbose_name='Is Creator')
-
-    def __str__(self):
-        return self.username
