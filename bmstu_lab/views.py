@@ -307,27 +307,20 @@ class UserLogout(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-class RemoveMapFromPool(APIView):
+class UpdateMapPosition(APIView):
     permission_classes = [IsAuthenticated]
-    def delete(self, request, map_pool_id, map_id):
-        try:
-            map_map_pool = MapMapPool.objects.get(map_id=map_id, map_pool_id=map_pool_id)
-            map_map_pool.delete()
-            return Response({"message": "Карта успешно удалена из заявки."}, status=status.HTTP_204_NO_CONTENT)
-        except MapMapPool.DoesNotExist:
-            return Response({"error": "Связь между картой и заявкой не найдена."}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-class UpdateMapPositionView(APIView):
-    permission_classes = [IsAuthenticated]
     def put(self, request, map_pool_id, map_id):
         new_position = request.data.get('position')
-        try:
-            map_map_pool = MapMapPool.objects.get(map_pool_id=map_pool_id, map_id=map_id)
-            map_map_pool.position = new_position
-            map_map_pool.save()
-            serializer = MapMapPoolSerializer(map_map_pool)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except MapMapPool.DoesNotExist:
-            return Response({"error": "MapMapPool entry not found."}, status=status.HTTP_404_NOT_FOUND)
+        map_map_pool = get_object_or_404(MapMapPool, map_pool_id=map_pool_id, map_id=map_id)
+        map_map_pool.position = new_position
+        map_map_pool.save()
+        serializer = MapMapPoolSerializer(map_map_pool)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class RemoveMapFromMapPool(APIView):
+    permission_classes = [IsAuthenticated]
+    def delete(self, request, map_pool_id, map_id):
+        map_map_pool = get_object_or_404(MapMapPool, map_id=map_id, map_pool_id=map_pool_id)
+        map_map_pool.delete()
+        return Response({"message": "Карта успешно удалена из заявки."}, status=status.HTTP_204_NO_CONTENT)
