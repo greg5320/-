@@ -22,7 +22,7 @@ x-minio-common: &minio-common
     # MINIO_ROOT_USER: minioadmin
     # MINIO_ROOT_PASSWORD: minioadmin
   healthcheck: # проверка состояния работоспособности кластера происходит путем выполнения get запроса на http://localhost:9000/minio/health/live
-    test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+    test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
     interval: 30s
     timeout: 20s
     retries: 3
@@ -74,7 +74,10 @@ services:
       - minio2
       - minio3
       - minio4
-
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
 ## По умолчанию в этой конфигурации используется локальный драйвер docker по умолчанию,
 ## Для пользовательских томов замените на конфигурацию драйвера тома.
 volumes:

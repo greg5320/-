@@ -1,8 +1,10 @@
+from collections import OrderedDict
+
 from rest_framework import serializers
+from rest_framework.authtoken.admin import User
+
 from .models import Map, MapPool, MapMapPool
-from django.contrib.auth.models import User
-from rest_framework import serializers
-from django.contrib.auth.models import User
+
 
 class MapSerializer(serializers.ModelSerializer):
     title = serializers.CharField(max_length=255)
@@ -12,12 +14,20 @@ class MapSerializer(serializers.ModelSerializer):
     players = serializers.CharField(max_length=50)
     tileset = serializers.CharField(max_length=50)
     overview = serializers.CharField()
+
     class Meta:
         model = Map
         fields = '__all__'
 
-class MapMapPoolSerializer(serializers.ModelSerializer):
+        def get_fields(self):
+            new_fields = OrderedDict()
+            for name, field in super().get_fields().items():
+                field.required = False
+                new_fields[name] = field
+            return new_fields
 
+
+class MapMapPoolSerializer(serializers.ModelSerializer):
     map = MapSerializer()
     position = serializers.IntegerField(min_value=1)
 
@@ -25,14 +35,32 @@ class MapMapPoolSerializer(serializers.ModelSerializer):
         model = MapMapPool
         fields = ['map', 'position']
 
+        def get_fields(self):
+            new_fields = OrderedDict()
+            for name, field in super().get_fields().items():
+                field.required = False
+                new_fields[name] = field
+            return new_fields
+
+
 class MapPoolSerializer(serializers.ModelSerializer):
     user_login = serializers.CharField(source='user.username', read_only=True)
     moderator_login = serializers.CharField(source='moderator.username', read_only=True, allow_null=True)
     maps = MapMapPoolSerializer(source='mapmappool', many=True, read_only=True)
+
     class Meta:
         model = MapPool
-        fields = ['id', 'status', 'player_login', 'creation_date', 'submit_date', 'complete_date', 'user_login', 'moderator_login','maps']
-        read_only_fields = ['user_login','moderator_login', 'creation_date', 'submit_date', 'complete_date']
+        fields = ['id', 'status', 'player_login', 'creation_date', 'submit_date', 'complete_date', 'user_login',
+                  'moderator_login', 'maps']
+        read_only_fields = ['user_login', 'moderator_login', 'creation_date', 'submit_date', 'complete_date']
+
+        def get_fields(self):
+            new_fields = OrderedDict()
+            for name, field in super().get_fields().items():
+                field.required = False
+                new_fields[name] = field
+            return new_fields
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -41,6 +69,13 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'password', 'email', 'first_name', 'last_name', 'is_staff']
+
+        def get_fields(self):
+            new_fields = OrderedDict()
+            for name, field in super().get_fields().items():
+                field.required = False
+                new_fields[name] = field
+            return new_fields
 
     def create(self, validated_data):
         user = User(
@@ -54,7 +89,41 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name', 'is_staff']
+
+        def get_fields(self):
+            new_fields = OrderedDict()
+            for name, field in super().get_fields().items():
+                field.required = False
+                new_fields[name] = field
+            return new_fields
+
+
+class UserSerializer(serializers.ModelSerializer):
+    is_staff = serializers.BooleanField(default=False, required=False)
+    is_superuser = serializers.BooleanField(default=False, required=False)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password', 'is_staff', 'is_superuser']
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True)
+
+
+class DraftSerializer(serializers.Serializer):
+    map_id = serializers.IntegerField(default=1)
+
+
+class PlayerLoginSerializer(serializers.Serializer):
+    player_login = serializers.CharField()
+
+
+class CompleteSerializer(serializers.Serializer):
+    action = serializers.CharField(default="complete")

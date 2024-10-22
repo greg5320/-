@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = 'django-insecure-!073em24n!@!1fg0xxtfkngomoen7ofs(o!38b8fts^-81gp8&
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '1.0.0.127.in-addr.arpa']
-
 
 # Application definition
 
@@ -41,28 +39,29 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'rest_framework.authtoken',
+    'drf_yasg',
 ]
+
 MINIO_STORAGE_ENDPOINT = 'localhost:9000'
 MINIO_STORAGE_ACCESS_KEY = 'minio'
 MINIO_STORAGE_SECRET_KEY = 'minio124'
 MINIO_STORAGE_BUCKET_NAME = 'mybucket'
 MINIO_STORAGE_USE_HTTPS = False
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_NAME = 'sessionid'
-SESSION_COOKIE_AGE = 1209600
-SESSION_SAVE_EVERY_REQUEST = True
+# SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# SESSION_COOKIE_NAME = 'sessionid'
+# SESSION_COOKIE_AGE = 1209600
+# SESSION_SAVE_EVERY_REQUEST = True
 
 ROOT_URLCONF = 'bmstu_lab.urls'
 
@@ -81,14 +80,14 @@ TEMPLATES = [
         },
     },
 ]
-
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 WSGI_APPLICATION = 'bmstu_lab.wsgi.application'
-
-
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = 6379
 CREATOR_USERNAME = 'exampleuser'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+LOGIN_REDIRECT_URL = '/swagger/'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -102,7 +101,12 @@ DATABASES = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ]
 }
 
 # Password validation
@@ -123,7 +127,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -134,7 +137,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
