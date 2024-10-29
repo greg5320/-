@@ -10,7 +10,7 @@ from .views import (
     UploadImageForMap,
     MapPoolListView, MapPoolDetailView,
     MapPoolSubmitView, CompleteOrRejectMapPool, RemoveMapFromMapPool,
-    UpdateMapPosition, RegisterView, UserLogin,
+    UpdateMapPosition, RegisterView, UserLogin, ProfileView,
 )
 
 router = routers.DefaultRouter()
@@ -37,9 +37,7 @@ urlpatterns = [
     path('map_pools/<int:id>/submit/', MapPoolSubmitView.as_view(), name='map_pool-submit'),
     path('map_pools/<int:id>/complete/', CompleteOrRejectMapPool.as_view(), name='map_pool-complete'),
     path('users/register/', RegisterView.as_view(), name='user-register'),
-    # path('users/login/', UserLogin.as_view(), name='user-login'),
-    # path('users/profile/', UserUpdate.as_view(), name='user-profile'),
-    # path('users/logout/', UserLogout.as_view(), name='user-logout'),
+    path('users/profile/', ProfileView.as_view(), name='user-profile'),
     path('map_pools/<int:map_pool_id>/map/<int:map_id>/', RemoveMapFromMapPool.as_view(),
          name='remove-map-from-map-pool'),
     path('map_pools/<int:map_pool_id>/map/<int:map_id>/position/', UpdateMapPosition.as_view(),
@@ -47,7 +45,7 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/', include(router.urls)),
-    path('login/', UserLogin.as_view(), name='login'),
-    path('logout/', views.logout_view, name='logout'),
+    path('users/login/', UserLogin.as_view(), name='login'),
+    path('users/logout/', views.logout_view, name='logout'),
 
 ]

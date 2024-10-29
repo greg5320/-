@@ -26,7 +26,8 @@ from .models import Map, MapPool, MapMapPool
 from .permissions import IsAdmin
 from .serializers import MapSerializer, MapMapPoolSerializer, \
     MapPoolSerializer, DraftSerializer, \
-    CompleteSerializer, UserUpdateSerializer, RegisterSerializer, LoginSerializer, PlayerLoginSerializer
+    CompleteSerializer, UserUpdateSerializer, RegisterSerializer, LoginSerializer, PlayerLoginSerializer, \
+    MapFilterSerializer, MapPoolFilterSerializer, UserProfileSerializer
 from .utils import add_image
 
 minio_client = Minio(settings.MINIO_STORAGE_ENDPOINT,
@@ -67,6 +68,7 @@ class MapList(APIView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    @swagger_auto_schema(query_serializer=MapFilterSerializer, responses={200: MapFilterSerializer(many=True)})
     def get(self, request):
         ssid = request.COOKIES.get("session_id")
         username = None
@@ -85,12 +87,12 @@ class MapList(APIView):
             if user:
                 is_staff = user.is_staff
         maps = Map.objects.filter(status='active')
-        title = request.query_params.get('title')
-        draft_id = None
-        draft_count = None
+        title = request.query_params.get('title', None)
         if title:
             maps = maps.filter(title__icontains=title)
         serializer = MapSerializer(maps, many=True)
+        draft_id = None
+        draft_count = None
         if real_user is not None:
             draft_map_pool = MapPool.objects.filter(user=request.user, status='draft').first()
             draft_id = draft_map_pool.id if draft_map_pool else None
@@ -265,6 +267,8 @@ class AddMapToDraft(APIView):
 
 
 class MapPoolListView(APIView):
+
+    @swagger_auto_schema(query_serializer=MapPoolFilterSerializer, responses={200: MapPoolFilterSerializer(many=True)})
     @method_permission_classes((IsAuthenticated,))
     def get(self, request):
         ssid = request.COOKIES.get("session_id")
@@ -287,9 +291,10 @@ class MapPoolListView(APIView):
         if is_staff == False:
             map_pools = map_pools.filter(user=user)
             # map_pools = MapPool.objects.all()
-        status_filter = request.query_params.get('status', None)
-        start_date = request.query_params.get('start_date', None)
-        end_date = request.query_params.get('end_date', None)
+
+        status_filter = request.query_params.get('status')
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
         if status_filter:
             map_pools = map_pools.filter(status=status_filter)
 
@@ -587,7 +592,7 @@ class UserLogout(APIView):
 class UpdateMapPosition(APIView):
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(request_body=MapMapPoolSerializer)
+    # @swagger_auto_schema(request_body=MapMapPoolSerializer)
     def put(self, request, map_pool_id, map_id):
         map_pool = get_object_or_404(MapPool, id=map_pool_id)
         ssid = request.COOKIES.get("session_id")
@@ -706,3 +711,32 @@ def logout_view(request):
     response = Response({'status': 'Success'})
     response.delete_cookie("session_id")
     return response
+
+
+class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        responses={200: UserProfileSerializer()},
+        operation_description="Получение профиля текущего пользователя"
+    )
+    def put(self, request):
+        ssid = request.COOKIES.get("session_id")
+        username = None
+        real_user = None
+        if ssid:
+            username = session_storage.get(ssid)
+            if isinstance(username, bytes):
+                username = username.decode('utf-8')
+            real_user = extract_between_quotes(username)
+            if not username:
+                return Response({"status": "error", "error": "Invalid session"}, status=status.HTTP_403_FORBIDDEN)
+        is_staff = False
+        if real_user:
+            if real_user:
+                user = User.objects.filter(username=real_user).first()
+            if user:
+                is_staff = user.is_staff
+
+        serializer = UserProfileSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)

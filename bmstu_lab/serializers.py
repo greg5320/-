@@ -127,3 +127,19 @@ class PlayerLoginSerializer(serializers.Serializer):
 
 class CompleteSerializer(serializers.Serializer):
     action = serializers.CharField(default="complete")
+
+
+class MapFilterSerializer(serializers.Serializer):
+    title = serializers.CharField(required=False)
+
+
+class MapPoolFilterSerializer(serializers.Serializer):
+    status = serializers.CharField(required=False, help_text="Фильтр по статусу карты (например, 'completed').")
+    start_date = serializers.DateField(required=False, help_text="Дата начала для фильтрации (в формате ГГГГ-ММ-ДД).")
+    end_date = serializers.DateField(required=False, help_text="Дата окончания для фильтрации (в формате ГГГГ-ММ-ДД).")
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'is_staff']
