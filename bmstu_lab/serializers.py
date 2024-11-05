@@ -50,9 +50,11 @@ class MapPoolSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MapPool
-        fields = ['id', 'status', 'player_login', 'creation_date', 'submit_date', 'complete_date', 'user_login',
+        fields = ['id', 'status', 'player_login', 'popularity', 'creation_date', 'submit_date', 'complete_date',
+                  'user_login',
                   'moderator_login', 'maps']
-        read_only_fields = ['user_login', 'moderator_login', 'creation_date', 'submit_date', 'complete_date']
+        read_only_fields = ['user_login', 'moderator_login', 'creation_date', 'submit_date', 'complete_date',
+                            'popularity']
 
         def get_fields(self):
             new_fields = OrderedDict()
@@ -134,7 +136,6 @@ class MapFilterSerializer(serializers.Serializer):
 
 
 class MapPoolFilterSerializer(serializers.Serializer):
-    status = serializers.CharField(required=False, help_text="Фильтр по статусу карты (например, 'completed').")
     start_date = serializers.DateField(required=False, help_text="Дата начала для фильтрации (в формате ГГГГ-ММ-ДД).")
     end_date = serializers.DateField(required=False, help_text="Дата окончания для фильтрации (в формате ГГГГ-ММ-ДД).")
 

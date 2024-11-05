@@ -30,6 +30,7 @@ class MapPool(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     submit_date = models.DateTimeField(null=True, blank=True)
     complete_date = models.DateTimeField(null=True, blank=True)
+    popularity = models.IntegerField(null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='map_pools')
     moderator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
                                   related_name='moderated_map_pools')

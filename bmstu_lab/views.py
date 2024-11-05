@@ -1,3 +1,4 @@
+import random
 import uuid
 from urllib.parse import urlparse
 
@@ -9,7 +10,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.dateparse import parse_date
-from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from minio import S3Error, Minio
@@ -41,14 +43,11 @@ session_storage = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDI
 # def get_creator():
 #   return User.objects.get(username=settings.CREATOR_USERNAME)
 def extract_between_quotes(data):
-    # Убеждаемся, что работаем со строкой
     if isinstance(data, bytes):
         data = data.decode('utf-8')
-
-    # Проверяем, что строка начинается и заканчивается одинарными кавычками
     if data.startswith("'") and data.endswith("'"):
-        return data[1:-1]  # Убираем кавычки
-    return data  # Возвращаем строку без изменений, если она не в кавычках
+        return data[1:-1]
+    return data
 
 
 def method_permission_classes(classes):
@@ -91,16 +90,16 @@ class MapList(APIView):
         if title:
             maps = maps.filter(title__icontains=title)
         serializer = MapSerializer(maps, many=True)
-        draft_id = None
-        draft_count = None
+        draft_pool_id = None
+        draft_pool_count = None
         if real_user is not None:
             draft_map_pool = MapPool.objects.filter(user=request.user, status='draft').first()
-            draft_id = draft_map_pool.id if draft_map_pool else None
-            draft_count = draft_map_pool.mapmappool.count() if draft_map_pool else 0
+            draft_pool_id = draft_map_pool.id if draft_map_pool else None
+            draft_pool_count = draft_map_pool.mapmappool.count() if draft_map_pool else 0
         return Response({
             'maps': serializer.data,
-            'draft_id': draft_id,
-            'draft_count': draft_count
+            'draft_pool_id': draft_pool_id,
+            'draft_pool_count': draft_pool_count
         })
 
     # @method_permission_classes((IsAdmin,))
@@ -208,11 +207,12 @@ class MapDetail(APIView):
         return Response({'message': 'Карта успешно удалена'}, status=status.HTTP_204_NO_CONTENT)
 
 
+@method_decorator(ensure_csrf_cookie, name='dispatch')
 class AddMapToDraft(APIView):
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(request_body=DraftSerializer)
     @csrf_exempt
+    @swagger_auto_schema(request_body=DraftSerializer)
     def post(self, request):
         ssid = request.COOKIES.get("session_id")
         username = None
@@ -226,8 +226,7 @@ class AddMapToDraft(APIView):
                 return Response({"status": "error", "error": "Invalid session"}, status=status.HTTP_403_FORBIDDEN)
         is_staff = False
         if real_user:
-            if real_user:
-                user = User.objects.filter(username=real_user).first()
+            user = User.objects.filter(username=real_user).first()
             if user:
                 is_staff = user.is_staff
 
@@ -246,7 +245,7 @@ class AddMapToDraft(APIView):
                 player_login=None,
                 creation_date=timezone.now(),
                 complete_date=None,
-                user=real_user,
+                user=user,
                 submit_date=None,
                 moderator=None,
             )
@@ -274,6 +273,7 @@ class MapPoolListView(APIView):
         ssid = request.COOKIES.get("session_id")
         username = None
         real_user = None
+        user = None
         if ssid:
             username = session_storage.get(ssid)
             if isinstance(username, bytes):
@@ -288,16 +288,14 @@ class MapPoolListView(APIView):
             if user:
                 is_staff = user.is_staff
         map_pools = MapPool.objects.exclude(status__in=['deleted', 'draft'])
+        if user == None:
+            return Response({"status": "error", "error": "Invalid session"}, status=status.HTTP_403_FORBIDDEN)
         if is_staff == False:
             map_pools = map_pools.filter(user=user)
             # map_pools = MapPool.objects.all()
 
-        status_filter = request.query_params.get('status')
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
-        if status_filter:
-            map_pools = map_pools.filter(status=status_filter)
-
         if start_date and end_date:
             start_date = parse_date(start_date)
             end_date = parse_date(end_date)
@@ -466,9 +464,10 @@ class CompleteOrRejectMapPool(APIView):
         map_pool.complete_date = timezone.now()
         if action == 'complete':
             map_pool.status = 'completed'
+            map_pool.popularity = random.randint(1, 10)
         elif action == 'reject':
             map_pool.status = 'rejected'
-
+            map_pool.popularity = random.randint(1, 10)
         map_pool.save()
         serializer = MapPoolSerializer(map_pool)
 
