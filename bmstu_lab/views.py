@@ -16,16 +16,14 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from minio import S3Error, Minio
 from rest_framework import status
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.authtoken.admin import User
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from rest_framework.generics import UpdateAPIView
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Map, MapPool, MapMapPool
-from .permissions import IsAdmin
 from .serializers import MapSerializer, MapMapPoolSerializer, \
     MapPoolSerializer, DraftSerializer, \
     CompleteSerializer, UserUpdateSerializer, RegisterSerializer, LoginSerializer, PlayerLoginSerializer, \
@@ -64,9 +62,11 @@ def method_permission_classes(classes):
 
 class MapList(APIView):
     # permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    authentication_classes = []
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [AllowAny]
 
+    @csrf_exempt
     @swagger_auto_schema(query_serializer=MapFilterSerializer, responses={200: MapFilterSerializer(many=True)})
     def get(self, request):
         ssid = request.COOKIES.get("session_id")
@@ -104,6 +104,7 @@ class MapList(APIView):
 
     # @method_permission_classes((IsAdmin,))
     @swagger_auto_schema(request_body=MapSerializer)
+    @csrf_exempt
     def post(self, request):
         ssid = request.COOKIES.get("session_id")
         username = None
@@ -133,8 +134,9 @@ class MapList(APIView):
 
 class MapDetail(APIView):
     # permission_classes = [IsAuthenticated]
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    authentication_classes = []
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [AllowAny]
 
     def get(self, request, id):
         try:
@@ -145,7 +147,7 @@ class MapDetail(APIView):
         return Response(serializer.data)
 
     @swagger_auto_schema(request_body=MapSerializer)
-    @method_permission_classes((IsAdmin,))
+    @csrf_exempt
     def put(self, request, id):
         ssid = request.COOKIES.get("session_id")
         username = None
@@ -209,7 +211,7 @@ class MapDetail(APIView):
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class AddMapToDraft(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     @csrf_exempt
     @swagger_auto_schema(request_body=DraftSerializer)
@@ -268,7 +270,6 @@ class AddMapToDraft(APIView):
 class MapPoolListView(APIView):
 
     @swagger_auto_schema(query_serializer=MapPoolFilterSerializer, responses={200: MapPoolFilterSerializer(many=True)})
-    @method_permission_classes((IsAuthenticated,))
     def get(self, request):
         ssid = request.COOKIES.get("session_id")
         username = None
@@ -621,7 +622,7 @@ class UpdateMapPosition(APIView):
 
 
 class RemoveMapFromMapPool(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def delete(self, request, map_pool_id, map_id):
         ssid = request.COOKIES.get("session_id")
@@ -713,7 +714,7 @@ def logout_view(request):
 
 
 class ProfileView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     @swagger_auto_schema(
         responses={200: UserProfileSerializer()},
