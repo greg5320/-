@@ -1,7 +1,7 @@
-from minio import Minio, S3Error
-from rest_framework.response import Response
 from django.conf import settings
+from minio import Minio, S3Error
 from rest_framework import status
+from rest_framework.response import Response
 
 
 def add_image(map_obj, image):
@@ -16,7 +16,7 @@ def add_image(map_obj, image):
         file_name = f"{map_obj.id}/{image.name}"
 
         minio_client.put_object(bucket_name, file_name, image, len(image))
-        map_obj.image_url = f"{settings.MINIO_STORAGE_ENDPOINT}/{bucket_name}/{file_name}"
+        map_obj.image_url = f"http://{settings.MINIO_STORAGE_ENDPOINT}/{bucket_name}/{file_name}"
         map_obj.save()
 
         return Response({'message': 'Image uploaded successfully'}, status=status.HTTP_200_OK)

@@ -173,7 +173,7 @@ class MapDetail(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @method_permission_classes((IsAdmin,))
+    @csrf_exempt
     def delete(self, request, id):
         ssid = request.COOKIES.get("session_id")
         username = None
