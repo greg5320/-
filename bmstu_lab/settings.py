@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
-    'corsheaders',
 ]
 
 MINIO_STORAGE_ENDPOINT = '127.0.0.1:9000'
@@ -57,11 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
 ]
 
 # SESSION_ENGINE = 'django.contrib.sessions.backends.db'
@@ -90,7 +85,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 WSGI_APPLICATION = 'bmstu_lab.wsgi.application'
 REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
-CREATOR_USERNAME = 'exampleuser'
+
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 LOGIN_REDIRECT_URL = '/swagger/'
