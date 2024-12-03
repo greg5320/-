@@ -10,7 +10,7 @@ from .views import (
     UploadImageForMap,
     MapPoolListView, MapPoolDetailView,
     MapPoolSubmitView, CompleteOrRejectMapPool, RemoveMapFromMapPool,
-    UpdateMapPosition, RegisterView, UserLogin, ProfileView,
+    UpdateMapPosition, RegisterView, UserLogin, ProfileView, PasswordReset
 )
 
 router = routers.DefaultRouter()
@@ -28,24 +28,25 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 urlpatterns = [
-    path('maps/', MapList.as_view(), name='map-list'),
-    path('maps/<int:id>/', MapDetail.as_view(), name='map-detail'),
-    path('maps/<int:id>/image/', UploadImageForMap.as_view(), name='upload-image'),
-    path('maps/draft/', AddMapToDraft.as_view(), name='add-map-to-draft'),
-    path('map_pools/', MapPoolListView.as_view(), name='map_pool_list'),
-    path('map_pools/<int:id>/', MapPoolDetailView.as_view(), name='map_pool-detail'),
-    path('map_pools/<int:id>/submit/', MapPoolSubmitView.as_view(), name='map_pool-submit'),
-    path('map_pools/<int:id>/complete/', CompleteOrRejectMapPool.as_view(), name='map_pool-complete'),
-    path('users/register/', RegisterView.as_view(), name='user-register'),
-    path('users/profile/', ProfileView.as_view(), name='user-profile'),
-    path('map_pools/<int:map_pool_id>/map/<int:map_id>/', RemoveMapFromMapPool.as_view(),
+    path('swagger.json', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('api/maps/', MapList.as_view(), name='map-list'),
+    path('api/maps/<int:id>/', MapDetail.as_view(), name='map-detail'),
+    path('api/maps/<int:id>/image/', UploadImageForMap.as_view(), name='upload-image'),
+    path('api/maps/draft/', AddMapToDraft.as_view(), name='add-map-to-draft'),
+    path('api/map_pools/', MapPoolListView.as_view(), name='map_pool_list'),
+    path('api/map_pools/<int:id>/', MapPoolDetailView.as_view(), name='map_pool-detail'),
+    path('api/map_pools/<int:id>/submit/', MapPoolSubmitView.as_view(), name='map_pool-submit'),
+    path('api/map_pools/<int:id>/complete/', CompleteOrRejectMapPool.as_view(), name='map_pool-complete'),
+    path('api/users/register/', RegisterView.as_view(), name='user-register'),
+    path('api/users/profile/', ProfileView.as_view(), name='user-profile'),
+    path('api/map_pools/<int:map_pool_id>/map/<int:map_id>/', RemoveMapFromMapPool.as_view(),
          name='remove-map-from-map-pool'),
-    path('map_pools/<int:map_pool_id>/map/<int:map_id>/position/', UpdateMapPosition.as_view(),
+    path('api/map_pools/<int:map_pool_id>/map/<int:map_id>/position/', UpdateMapPosition.as_view(),
          name='update-map-position'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/', include(router.urls)),
-    path('users/login/', UserLogin.as_view(), name='login'),
-    path('users/logout/', views.logout_view, name='logout'),
-
+    path('api/users/login/', UserLogin.as_view(), name='login'),
+    path('api/users/logout/', views.logout_view, name='logout'),
+    path('api/users/reset-password/', PasswordReset.as_view(), name='reset-password'),
 ]

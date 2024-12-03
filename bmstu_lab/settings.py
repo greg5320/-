@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
+    'corsheaders',
 ]
 
 MINIO_STORAGE_ENDPOINT = '127.0.0.1:9000'
@@ -57,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 
 ]
 
@@ -64,6 +66,10 @@ MIDDLEWARE = [
 # SESSION_COOKIE_NAME = 'sessionid'
 # SESSION_COOKIE_AGE = 1209600
 # SESSION_SAVE_EVERY_REQUEST = True
+
+SESSION_COOKIE_DOMAIN = 'localhost'
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = False
 
 ROOT_URLCONF = 'bmstu_lab.urls'
 
@@ -87,6 +93,12 @@ WSGI_APPLICATION = 'bmstu_lab.wsgi.application'
 REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://your-production-url.com",
+]
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 LOGIN_REDIRECT_URL = '/swagger/'
@@ -145,9 +157,6 @@ USE_TZ = True
 
 STATIC_URL = 'bmstu_lab/static/'
 
-STATICFILES_DIRS = [
-    BASE_DIR / "bmstu_lab/static",
-]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

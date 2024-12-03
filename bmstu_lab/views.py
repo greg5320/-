@@ -18,7 +18,6 @@ from minio import S3Error, Minio
 from rest_framework import status
 from rest_framework.authtoken.admin import User
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
-from rest_framework.generics import UpdateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -26,8 +25,8 @@ from rest_framework.views import APIView
 from .models import Map, MapPool, MapMapPool
 from .serializers import MapSerializer, MapMapPoolSerializer, \
     MapPoolSerializer, DraftSerializer, \
-    CompleteSerializer, UserUpdateSerializer, RegisterSerializer, LoginSerializer, PlayerLoginSerializer, \
-    MapFilterSerializer, MapPoolFilterSerializer, UserProfileSerializer
+    CompleteSerializer, RegisterSerializer, LoginSerializer, PlayerLoginSerializer, \
+    MapFilterSerializer, MapPoolFilterSerializer, UserProfileSerializer, PasswordResetSerializer
 from .utils import add_image
 
 minio_client = Minio(settings.MINIO_STORAGE_ENDPOINT,
@@ -93,7 +92,7 @@ class MapList(APIView):
         draft_pool_id = None
         draft_pool_count = None
         if real_user is not None:
-            draft_map_pool = MapPool.objects.filter(user=request.user, status='draft').first()
+            draft_map_pool = MapPool.objects.filter(user=user, status='draft').first()
             draft_pool_id = draft_map_pool.id if draft_map_pool else None
             draft_pool_count = draft_map_pool.mapmappool.count() if draft_map_pool else 0
         return Response({
@@ -288,7 +287,9 @@ class MapPoolListView(APIView):
                 user = User.objects.filter(username=real_user).first()
             if user:
                 is_staff = user.is_staff
-        map_pools = MapPool.objects.exclude(status__in=['deleted', 'draft'])
+        # map_pools = MapPool.objects.exclude(status__in=['deleted', 'draft'])
+        map_pools = MapPool.objects.exclude(status__in=['deleted'])
+
         if user == None:
             return Response({"status": "error", "error": "Invalid session"}, status=status.HTTP_403_FORBIDDEN)
         if is_staff == False:
@@ -307,7 +308,9 @@ class MapPoolListView(APIView):
 
 
 class MapPoolDetailView(APIView):
-    @method_permission_classes((IsAuthenticated,))
+    # @method_permission_classes((IsAuthenticated,))
+    permission_classes = [AllowAny]
+
     def get(self, request, id):
         ssid = request.COOKIES.get("session_id")
         username = None
@@ -332,7 +335,7 @@ class MapPoolDetailView(APIView):
         return Response(serializer.data)
 
     @swagger_auto_schema(request_body=PlayerLoginSerializer)
-    @method_permission_classes((IsAuthenticated,))
+    # @method_permission_classes((IsAuthenticated,))
     def put(self, request, id):
         ssid = request.COOKIES.get("session_id")
         username = None
@@ -362,7 +365,7 @@ class MapPoolDetailView(APIView):
         serializer = MapPoolSerializer(map_pool)
         return Response(serializer.data)
 
-    @method_permission_classes((IsAuthenticated,))
+    # @method_permission_classes((IsAuthenticated,))
     def delete(self, request, id):
         ssid = request.COOKIES.get("session_id")
         username = None
@@ -395,7 +398,9 @@ class MapPoolDetailView(APIView):
 
 
 class MapPoolSubmitView(APIView):
-    @method_permission_classes((IsAuthenticated,))
+    permission_classes = [AllowAny]
+
+    # @method_permission_classes((IsAuthenticated,))
     @swagger_auto_schema(request_body=MapPoolSerializer)
     def put(self, request, id):
         ssid = request.COOKIES.get("session_id")
@@ -544,51 +549,6 @@ class RegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-'''
-class UserLogin(ObtainAuthToken):
-    @swagger_auto_schema(request_body=AuthTokenSerializer)
-    def post(self, request, *args, **kwargs):
-        serializer = AuthTokenSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.validated_data['user']
-            update_last_login(None, user)
-            token, created = Token.objects.get_or_create(user=user)
-            return Response({
-                'token': token.key,
-                'user': {
-                    'username': user.username,
-                    'email': user.email,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'is_staff': user.is_staff,
-                }
-            }, status=status.HTTP_200_OK)
-        return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-'''
-
-
-class UserUpdate(UpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserUpdateSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
-
-
-class UserLogout(APIView):
-    permission_classes = [IsAuthenticated]
-
-    # @swagger_auto_schema(request_body=StockSerializer)
-    def post(self, request):
-        try:
-            token = request.auth
-            token.delete()
-            return Response({"message": "Вы успешно вышли из системы."}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
 class UpdateMapPosition(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -649,23 +609,6 @@ class RemoveMapFromMapPool(APIView):
         return Response({"message": "Карта успешно удалена из заявки."}, status=status.HTTP_204_NO_CONTENT)
 
 
-'''
-class UserViewSet(viewsets.ModelViewSet):
-    # queryset = CustomUser.objects.all()
-    serializer_class = UserSerializer
-
-    def get_permissions(self):
-        if self.action in ['create']:
-            permission_classes = [AllowAny]
-        elif self.action in ['list']:
-            permission_classes = [IsAdmin | IsManager]
-        else:
-            permission_classes = [IsAdmin]
-        return [permission() for permission in permission_classes]
-
-'''
-
-
 class UserLogin(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
@@ -720,6 +663,7 @@ class ProfileView(APIView):
         responses={200: UserProfileSerializer()},
         operation_description="Получение профиля текущего пользователя"
     )
+    @csrf_exempt
     def put(self, request):
         ssid = request.COOKIES.get("session_id")
         username = None
@@ -740,3 +684,46 @@ class ProfileView(APIView):
 
         serializer = UserProfileSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class PasswordReset(APIView):
+    permission_classes = [AllowAny]
+
+    @csrf_exempt
+    def put(self, request):
+        # Проверяем наличие session_id в cookies
+        ssid = request.COOKIES.get("session_id")
+        if not ssid:
+            return Response({"status": "error", "error": "Session ID not provided."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # Извлечение имени пользователя из session_storage
+        username = session_storage.get(ssid)
+        if not username:
+            return Response({"status": "error", "error": "Invalid session or session expired."},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        if isinstance(username, bytes):
+            username = username.decode('utf-8')
+
+        real_user = extract_between_quotes(username)
+        if not real_user:
+            return Response({"status": "error", "error": "Invalid session data."}, status=status.HTTP_403_FORBIDDEN)
+
+        # Проверяем, существует ли пользователь
+        user = User.objects.filter(username=real_user).first()
+        if not user:
+            return Response({"status": "error", "error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Проверяем переданные данные
+        serializer = PasswordResetSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({"status": "error", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Сбрасываем пароль
+        new_password = serializer.validated_data["password"]
+        user.set_password(new_password)
+        user.save()
+
+        return Response({"status": "success", "message": "Password has been reset successfully."},
+                        status=status.HTTP_200_OK)
