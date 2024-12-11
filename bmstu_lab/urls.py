@@ -10,7 +10,7 @@ from .views import (
     UploadImageForMap,
     MapPoolListView, MapPoolDetailView,
     MapPoolSubmitView, CompleteOrRejectMapPool, RemoveMapFromMapPool,
-    UpdateMapPosition, RegisterView, UserLogin, ProfileView, PasswordReset
+    UpdateMapPosition, RegisterView, UserLogin, ProfileView, PasswordReset, Update_map_positions
 )
 
 router = routers.DefaultRouter()
@@ -49,4 +49,6 @@ urlpatterns = [
     path('api/users/login/', UserLogin.as_view(), name='login'),
     path('api/users/logout/', views.logout_view, name='logout'),
     path('api/users/reset-password/', PasswordReset.as_view(), name='reset-password'),
+    path('api/map_pools/<int:map_pool_id>/update_positions/', Update_map_positions.as_view(),
+         name='update_map_positions'),
 ]

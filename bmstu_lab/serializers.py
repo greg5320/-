@@ -138,6 +138,7 @@ class MapFilterSerializer(serializers.Serializer):
 class MapPoolFilterSerializer(serializers.Serializer):
     start_date = serializers.DateField(required=False, help_text="Дата начала для фильтрации (в формате ГГГГ-ММ-ДД).")
     end_date = serializers.DateField(required=False, help_text="Дата окончания для фильтрации (в формате ГГГГ-ММ-ДД).")
+    status_query = serializers.CharField(required=False)
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

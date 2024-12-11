@@ -18,7 +18,7 @@ from minio import S3Error, Minio
 from rest_framework import status
 from rest_framework.authtoken.admin import User
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -287,21 +287,27 @@ class MapPoolListView(APIView):
                 user = User.objects.filter(username=real_user).first()
             if user:
                 is_staff = user.is_staff
-        # map_pools = MapPool.objects.exclude(status__in=['deleted', 'draft'])
-        map_pools = MapPool.objects.exclude(status__in=['deleted'])
+        map_pools = MapPool.objects.exclude(status__in=['deleted', 'draft'])
+        # map_pools = MapPool.objects.exclude(status__in=['deleted'])
 
         if user == None:
             return Response({"status": "error", "error": "Invalid session"}, status=status.HTTP_403_FORBIDDEN)
         if is_staff == False:
+            map_pools = MapPool.objects.exclude(status__in=['deleted'])
             map_pools = map_pools.filter(user=user)
             # map_pools = MapPool.objects.all()
 
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
+        # status = request.query_params.get('status')
         if start_date and end_date:
             start_date = parse_date(start_date)
             end_date = parse_date(end_date)
             map_pools = map_pools.filter(submit_date__range=[start_date, end_date])
+
+        status_query = request.query_params.get('status_query')
+        if status_query:
+            map_pools = map_pools.filter(status=status_query)
 
         serializer = MapPoolSerializer(map_pools, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -473,7 +479,6 @@ class CompleteOrRejectMapPool(APIView):
             map_pool.popularity = random.randint(1, 10)
         elif action == 'reject':
             map_pool.status = 'rejected'
-            map_pool.popularity = random.randint(1, 10)
         map_pool.save()
         serializer = MapPoolSerializer(map_pool)
 
@@ -550,7 +555,7 @@ class RegisterView(APIView):
 
 
 class UpdateMapPosition(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     # @swagger_auto_schema(request_body=MapMapPoolSerializer)
     def put(self, request, map_pool_id, map_id):
@@ -668,6 +673,7 @@ class ProfileView(APIView):
         ssid = request.COOKIES.get("session_id")
         username = None
         real_user = None
+        user = None
         if ssid:
             username = session_storage.get(ssid)
             if isinstance(username, bytes):
@@ -681,7 +687,8 @@ class ProfileView(APIView):
                 user = User.objects.filter(username=real_user).first()
             if user:
                 is_staff = user.is_staff
-
+        if user is None:
+            return Response({"status": "error", "error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
         serializer = UserProfileSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -691,13 +698,10 @@ class PasswordReset(APIView):
 
     @csrf_exempt
     def put(self, request):
-        # Проверяем наличие session_id в cookies
         ssid = request.COOKIES.get("session_id")
         if not ssid:
             return Response({"status": "error", "error": "Session ID not provided."},
                             status=status.HTTP_400_BAD_REQUEST)
-
-        # Извлечение имени пользователя из session_storage
         username = session_storage.get(ssid)
         if not username:
             return Response({"status": "error", "error": "Invalid session or session expired."},
@@ -710,20 +714,37 @@ class PasswordReset(APIView):
         if not real_user:
             return Response({"status": "error", "error": "Invalid session data."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Проверяем, существует ли пользователь
         user = User.objects.filter(username=real_user).first()
         if not user:
             return Response({"status": "error", "error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Проверяем переданные данные
         serializer = PasswordResetSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({"status": "error", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Сбрасываем пароль
         new_password = serializer.validated_data["password"]
         user.set_password(new_password)
         user.save()
 
         return Response({"status": "success", "message": "Password has been reset successfully."},
                         status=status.HTTP_200_OK)
+
+
+class Update_map_positions(APIView):
+    permission_classes = [AllowAny]
+
+    @csrf_exempt
+    def put(self, request, map_pool_id):
+        positions = request.data.get('positions', [])
+        if not positions:
+            return Response({'error': 'No positions provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            for position_data in positions:
+                map_id = position_data['id']
+                new_position = position_data['position']
+                MapMapPool.objects.filter(map_pool_id=map_pool_id, map_id=map_id).update(position=new_position)
+
+            return Response({'success': True}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
