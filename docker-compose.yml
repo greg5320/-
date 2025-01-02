@@ -88,11 +88,33 @@ services:
       POSTGRES_DB: db
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - ./pgdata:/var/lib/postgresql/data/pgdata
-## По умолчанию в этой конфигурации используется локальный драйвер docker по умолчанию,
-## Для пользовательских томов замените на конфигурацию драйвера тома.
+  backend:
+    build:
+      context: ./
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:app
+    depends_on:
+      - postgres
+      - minio1
+      - minio2
+      - minio3
+      - minio4
+      - redis
+
+  frontend:
+    build:
+      context: ../frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ../frontend:/app
+
+
 volumes:
   data1-1:
   data1-2:
