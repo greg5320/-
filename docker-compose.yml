@@ -59,23 +59,6 @@ services:
       - data4-1:/data1
       - data4-2:/data2
 
-  nginx: # наш еще один сервис в подсети docker будет nginx
-    image: nginx:1.19.2-alpine # исходники сервиса взять отсюда
-    hostname: nginx # hostname внутри подсети docker будет nginx
-    volumes:
-      # куда физически переадресовать* память(в какие разделы) из виртуальной(в докере) на вашу машину. по сути это работает как хард линк на файл/папку.
-      # доступ даем на ro (read only)
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ../frontend/dist:/usr/share/nginx/html
-    ports:
-      - "9000:9000" # форвардим порт 9000 из нашей локальной сети(localhost) (forward port) на исхоодный(внутри подсети docker)(source port)
-      - "9001:9001" # левый порт - порт вашей локальной сети компьютера, таргетный. порт справа - соурс порт - порт внутри подсети докера.
-    depends_on: # не запускай nginx пока не запустится весь кластер minio
-      - minio1
-      - minio2
-      - minio3
-      - minio4
   redis:
     image: redis:alpine
     ports:
@@ -116,7 +99,23 @@ services:
     volumes:
       - ../frontend:/app
 
-
+  nginx: # наш еще один сервис в подсети docker будет nginx
+    image: nginx:1.19.2-alpine # исходники сервиса взять отсюда
+    hostname: nginx # hostname внутри подсети docker будет nginx
+    volumes:
+      # куда физически переадресовать* память(в какие разделы) из виртуальной(в докере) на вашу машину. по сути это работает как хард линк на файл/папку.
+      # доступ даем на ro (read only)
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ../frontend/dist:/usr/share/nginx/html
+    ports:
+      - "9000:9000" # форвардим порт 9000 из нашей локальной сети(localhost) (forward port) на исхоодный(внутри подсети docker)(source port)
+      - "9001:9001" # левый порт - порт вашей локальной сети компьютера, таргетный. порт справа - соурс порт - порт внутри подсети докера.
+    depends_on: # не запускай nginx пока не запустится весь кластер minio
+      - minio1
+      - minio2
+      - minio3
+      - minio4
 volumes:
   data1-1:
   data1-2:
