@@ -78,6 +78,19 @@ services:
     image: redis:alpine
     ports:
       - "6379:6379"
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/pgdata
 ## По умолчанию в этой конфигурации используется локальный драйвер docker по умолчанию,
 ## Для пользовательских томов замените на конфигурацию драйвера тома.
 volumes:
@@ -89,3 +102,5 @@ volumes:
   data3-2:
   data4-1:
   data4-2:
+  pgdata:
+    driver: local

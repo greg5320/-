@@ -26,7 +26,7 @@ from .models import Map, MapPool, MapMapPool
 from .serializers import MapSerializer, MapMapPoolSerializer, \
     MapPoolSerializer, DraftSerializer, \
     CompleteSerializer, RegisterSerializer, LoginSerializer, PlayerLoginSerializer, \
-    MapFilterSerializer, MapPoolFilterSerializer, UserProfileSerializer, PasswordResetSerializer
+    MapFilterSerializer, MapPoolFilterSerializer, UserProfileSerializer
 from .utils import add_image
 
 minio_client = Minio(settings.MINIO_STORAGE_ENDPOINT,
@@ -112,8 +112,11 @@ class MapList(APIView):
             username = session_storage.get(ssid)
             if isinstance(username, bytes):
                 username = username.decode('utf-8')
-            real_user = extract_between_quotes(username)
-            if not username:
+            if username:
+                real_user = extract_between_quotes(username)
+            else:
+                return Response({"status": "error", "error": "Invalid session"}, status=status.HTTP_403_FORBIDDEN)
+            if not real_user:
                 return Response({"status": "error", "error": "Invalid session"}, status=status.HTTP_403_FORBIDDEN)
         is_staff = False
         if real_user:
@@ -293,7 +296,7 @@ class MapPoolListView(APIView):
         if user == None:
             return Response({"status": "error", "error": "Invalid session"}, status=status.HTTP_403_FORBIDDEN)
         if is_staff == False:
-            map_pools = MapPool.objects.exclude(status__in=['deleted'])
+            map_pools = MapPool.objects.exclude(status__in=['deleted', 'draft'])
             map_pools = map_pools.filter(user=user)
             # map_pools = MapPool.objects.all()
 
@@ -391,7 +394,7 @@ class MapPoolDetailView(APIView):
                 is_staff = user.is_staff
         try:
             map_pool = MapPool.objects.get(id=id)
-            if not is_staff and map_pool.user != real_user:
+            if not is_staff and str(map_pool.user) != str(real_user):
                 return Response(status=status.HTTP_403_FORBIDDEN)
         except MapPool.DoesNotExist:
             return Response({"error": "Заявка не найдена"}, status=status.HTTP_404_NOT_FOUND)
@@ -441,6 +444,8 @@ class MapPoolSubmitView(APIView):
 
 
 class CompleteOrRejectMapPool(APIView):
+    permission_classes = [AllowAny]
+
     @swagger_auto_schema(request_body=CompleteSerializer)
     @csrf_exempt
     def put(self, request, id):
@@ -489,6 +494,7 @@ class CompleteOrRejectMapPool(APIView):
 
 
 class UploadImageForMap(APIView):
+    permission_classes = [AllowAny]
 
     # @method_permission_classes((IsAdmin,))
     # @swagger_auto_schema(request_body=StockSerializer)
@@ -678,8 +684,11 @@ class ProfileView(APIView):
             username = session_storage.get(ssid)
             if isinstance(username, bytes):
                 username = username.decode('utf-8')
-            real_user = extract_between_quotes(username)
-            if not username:
+            if username:
+                real_user = extract_between_quotes(username)
+            else:
+                return Response({"status": "error", "error": "Invalid session"}, status=status.HTTP_403_FORBIDDEN)
+            if not real_user:
                 return Response({"status": "error", "error": "Invalid session"}, status=status.HTTP_403_FORBIDDEN)
         is_staff = False
         if real_user:
@@ -689,62 +698,14 @@ class ProfileView(APIView):
                 is_staff = user.is_staff
         if user is None:
             return Response({"status": "error", "error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-        serializer = UserProfileSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = UserProfileSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            if 'password' in serializer.validated_data:
+                new_password = serializer.validated_data.pop('password')
+                user.set_password(new_password)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PasswordReset(APIView):
-    permission_classes = [AllowAny]
-
-    @csrf_exempt
-    def put(self, request):
-        ssid = request.COOKIES.get("session_id")
-        if not ssid:
-            return Response({"status": "error", "error": "Session ID not provided."},
-                            status=status.HTTP_400_BAD_REQUEST)
-        username = session_storage.get(ssid)
-        if not username:
-            return Response({"status": "error", "error": "Invalid session or session expired."},
-                            status=status.HTTP_403_FORBIDDEN)
-
-        if isinstance(username, bytes):
-            username = username.decode('utf-8')
-
-        real_user = extract_between_quotes(username)
-        if not real_user:
-            return Response({"status": "error", "error": "Invalid session data."}, status=status.HTTP_403_FORBIDDEN)
-
-        user = User.objects.filter(username=real_user).first()
-        if not user:
-            return Response({"status": "error", "error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = PasswordResetSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response({"status": "error", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-        new_password = serializer.validated_data["password"]
-        user.set_password(new_password)
-        user.save()
-
-        return Response({"status": "success", "message": "Password has been reset successfully."},
-                        status=status.HTTP_200_OK)
-
-
-class Update_map_positions(APIView):
-    permission_classes = [AllowAny]
-
-    @csrf_exempt
-    def put(self, request, map_pool_id):
-        positions = request.data.get('positions', [])
-        if not positions:
-            return Response({'error': 'No positions provided'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            for position_data in positions:
-                map_id = position_data['id']
-                new_position = position_data['position']
-                MapMapPool.objects.filter(map_pool_id=map_pool_id, map_id=map_id).update(position=new_position)
-
-            return Response({'success': True}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+from django.contrib.auth.models import User

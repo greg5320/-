@@ -7,13 +7,14 @@ from .models import Map, MapPool, MapMapPool
 
 
 class MapSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(max_length=255)
-    description = serializers.CharField()
-    status = serializers.ChoiceField(choices=[('active', 'Действует'), ('deleted', 'Удалён')])
+    title = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    description = serializers.CharField(required=False, allow_blank=True)
+    status = serializers.ChoiceField(choices=[('active', 'Действует'), ('deleted', 'Удалён')], required=False,
+                                     allow_blank=True)
     image_url = serializers.URLField(required=False, allow_null=True)
-    players = serializers.CharField(max_length=50)
-    tileset = serializers.CharField(max_length=50)
-    overview = serializers.CharField()
+    players = serializers.CharField(max_length=50, required=False, allow_blank=True)
+    tileset = serializers.CharField(max_length=50, required=False, allow_blank=True)
+    overview = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = Map
@@ -142,9 +143,11 @@ class MapPoolFilterSerializer(serializers.Serializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'is_staff']
+        fields = ['username', 'email', 'first_name', 'last_name', 'password', 'is_staff']
 
 
 class PasswordResetSerializer(serializers.Serializer):
