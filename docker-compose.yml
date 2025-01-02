@@ -66,6 +66,8 @@ services:
       # куда физически переадресовать* память(в какие разделы) из виртуальной(в докере) на вашу машину. по сути это работает как хард линк на файл/папку.
       # доступ даем на ro (read only)
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ../frontend/dist:/usr/share/nginx/html
     ports:
       - "9000:9000" # форвардим порт 9000 из нашей локальной сети(localhost) (forward port) на исхоодный(внутри подсети docker)(source port)
       - "9001:9001" # левый порт - порт вашей локальной сети компьютера, таргетный. порт справа - соурс порт - порт внутри подсети докера.
@@ -97,7 +99,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./:app
+      - ./:/app
     depends_on:
       - postgres
       - minio1
