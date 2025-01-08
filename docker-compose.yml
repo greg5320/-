@@ -79,8 +79,6 @@ services:
   backend:
     build:
       context: ./
-    ports:
-      - "8000:8000"
     volumes:
       - ./:/app
     depends_on:
@@ -94,8 +92,6 @@ services:
   frontend:
     build:
       context: ../frontend
-    ports:
-      - "3000:80"
     volumes:
       - ../frontend:/app
 
