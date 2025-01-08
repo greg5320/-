@@ -76,25 +76,6 @@ services:
       - "5432:5432"
     volumes:
       - ./pgdata:/var/lib/postgresql/data/pgdata
-  backend:
-    build:
-      context: ./
-    volumes:
-      - ./:/app
-    depends_on:
-      - postgres
-      - minio1
-      - minio2
-      - minio3
-      - minio4
-      - redis
-
-  frontend:
-    build:
-      context: ../frontend
-    volumes:
-      - ../frontend:/app
-
   nginx: # наш еще один сервис в подсети docker будет nginx
     image: nginx:1.19.2-alpine # исходники сервиса взять отсюда
     hostname: nginx # hostname внутри подсети docker будет nginx
@@ -109,6 +90,30 @@ services:
       - minio2
       - minio3
       - minio4
+
+  backend:
+    build:
+      context: ./
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+    depends_on:
+      - postgres
+      - minio1
+      - minio2
+      - minio3
+      - minio4
+      - redis
+
+  frontend:
+    build:
+      context: ../frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ../frontend:/app
+
 volumes:
   data1-1:
   data1-2:
