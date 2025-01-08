@@ -1,7 +1,8 @@
 # устанавливаем версию в соотвествии с необходимой нам
 # подробнее на https://docs.docker.com/compose/compose-file/compose-versioning/
 version: '3.7'
-
+networks:
+  dev:
 # настройки и конфигурации, общие для всех контейнеров
 x-minio-common: &minio-common
   image: quay.io/minio/minio:RELEASE.2022-10-15T19-57-03Z # устанавливаем image
@@ -37,33 +38,38 @@ services:
     volumes: # куда физически переадресовать* память(в какие разделы) из виртуальной(в докере) на вашу машину. по сути это работает как хард линк на файл/папку
       - data1-1:/data1
       - data1-2:/data2
-
+    networks:
+      - dev
   minio2: # аналогично ставим 2-4 ноды
     <<: *minio-common
     hostname: minio2
     volumes:
       - data2-1:/data1
       - data2-2:/data2
-
+    networks:
+      - dev
   minio3:
     <<: *minio-common
     hostname: minio3
     volumes:
       - data3-1:/data1
       - data3-2:/data2
-
+    networks:
+      - dev
   minio4:
     <<: *minio-common
     hostname: minio4
     volumes:
       - data4-1:/data1
       - data4-2:/data2
-
+    networks:
+      - dev
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
-
+    networks:
+      - dev
   postgres:
     image: postgres:latest
     container_name: postgres_container
@@ -76,6 +82,8 @@ services:
       - "5432:5432"
     volumes:
       - ./pgdata:/var/lib/postgresql/data/pgdata
+    networks:
+      - dev
   nginx: # наш еще один сервис в подсети docker будет nginx
     image: nginx:1.19.2-alpine # исходники сервиса взять отсюда
     hostname: nginx # hostname внутри подсети docker будет nginx
@@ -90,7 +98,8 @@ services:
       - minio2
       - minio3
       - minio4
-
+    networks:
+      - dev
   backend:
     build:
       context: ./
@@ -105,7 +114,8 @@ services:
       - minio3
       - minio4
       - redis
-
+    networks:
+      - dev
   frontend:
     build:
       context: ../frontend
@@ -113,7 +123,8 @@ services:
       - "3000:80"
     volumes:
       - ../frontend:/app
-
+    networks:
+      - dev
 volumes:
   data1-1:
   data1-2:

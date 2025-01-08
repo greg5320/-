@@ -98,7 +98,7 @@ REDIS_PORT = 6379
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://your-production-url.com",
+    "http://62.113.42.126",
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
@@ -111,7 +111,7 @@ DATABASES = {
         'NAME': 'db',
         'USER': 'postgres',
         'PASSWORD': 'password',
-        'HOST': 'localhost',
+        'HOST': 'postgres_container',
         'PORT': '5432',
     }
 }
